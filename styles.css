@@ -508,16 +508,15 @@ textarea {
 
 .todo-item__topline {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 10px;
-  align-items: center;
-  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .todo-item__title-input {
   font-size: 1.05rem;
   flex: 1;
-  width: 100%;
+  min-width: 0;
   padding: 0;
   border: 0;
   background: transparent;
@@ -533,7 +532,8 @@ textarea {
 }
 
 .todo-item__priority {
-  width: auto;
+  width: 116px;
+  flex: 0 0 116px;
   min-width: 116px;
   padding: 8px 12px;
   border-radius: 999px;
