@@ -508,9 +508,9 @@ textarea {
 
 .todo-item__topline {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: flex-start;
+  grid-template-columns: minmax(0, 1fr) 132px;
+  column-gap: 16px;
+  align-items: start;
 }
 
 .todo-item__title-input {
@@ -535,14 +535,14 @@ textarea {
 }
 
 .todo-item__priority {
-  width: 116px;
-  flex: 0 0 116px;
-  min-width: 116px;
+  width: 132px;
+  min-width: 132px;
   padding: 8px 12px;
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 700;
   background: rgba(255, 255, 255, 0.88);
+  justify-self: end;
 }
 
 .todo-item__priority[data-priority="high"] {
