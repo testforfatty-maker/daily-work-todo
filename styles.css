@@ -481,7 +481,7 @@ textarea {
   opacity: 0.72;
 }
 
-.todo-item.is-done .todo-item__title {
+.todo-item.is-done .todo-item__title-input {
   text-decoration: line-through;
 }
 
@@ -514,9 +514,22 @@ textarea {
   justify-content: space-between;
 }
 
-.todo-item__title {
+.todo-item__title-input {
   font-size: 1.05rem;
   flex: 1;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-weight: 700;
+  color: var(--text);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.todo-item__title-input:focus {
+  box-shadow: none;
+  border: 0;
 }
 
 .todo-item__priority {
@@ -564,7 +577,7 @@ textarea {
   font-weight: 600;
 }
 
-.todo-item__detail-text {
+.todo-item__detail-input {
   margin-top: 10px;
   padding: 12px 14px;
   border-radius: 14px;
@@ -573,6 +586,7 @@ textarea {
   color: var(--muted);
   line-height: 1.7;
   white-space: pre-wrap;
+  min-height: 110px;
 }
 
 .todo-item__delete {

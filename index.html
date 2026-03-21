@@ -215,7 +215,7 @@
             <input class="todo-item__checkbox" type="checkbox" />
             <span class="todo-item__content">
               <span class="todo-item__topline">
-                <strong class="todo-item__title"></strong>
+                <input class="todo-item__title-input" type="text" maxlength="120" aria-label="编辑任务标题" />
                 <select class="todo-item__priority" aria-label="调整优先级">
                   <option value="high">高优先级</option>
                   <option value="medium">中优先级</option>
@@ -228,7 +228,7 @@
           </label>
           <div class="todo-item__details" hidden>
             <button class="todo-item__toggle" type="button">展开详情</button>
-            <p class="todo-item__detail-text"></p>
+            <textarea class="todo-item__detail-input" rows="4" maxlength="500" aria-label="编辑任务详情"></textarea>
           </div>
         </div>
         <button class="todo-item__delete" type="button" aria-label="删除任务">删除</button>

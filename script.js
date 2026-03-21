@@ -210,18 +210,18 @@ function render() {
     const fragment = template.content.cloneNode(true);
     const item = fragment.querySelector(".todo-item");
     const checkbox = fragment.querySelector(".todo-item__checkbox");
-    const title = fragment.querySelector(".todo-item__title");
+    const titleInput = fragment.querySelector(".todo-item__title-input");
     const prioritySelect = fragment.querySelector(".todo-item__priority");
     const meta = fragment.querySelector(".todo-item__meta");
     const note = fragment.querySelector(".todo-item__note");
     const details = fragment.querySelector(".todo-item__details");
     const toggleButton = fragment.querySelector(".todo-item__toggle");
-    const detailText = fragment.querySelector(".todo-item__detail-text");
+    const detailInput = fragment.querySelector(".todo-item__detail-input");
     const deleteButton = fragment.querySelector(".todo-item__delete");
 
     item.classList.toggle("is-done", todo.done);
     checkbox.checked = todo.done;
-    title.textContent = todo.title;
+    titleInput.value = todo.title;
     prioritySelect.value = todo.priority;
     prioritySelect.dataset.priority = todo.priority;
 
@@ -235,22 +235,53 @@ function render() {
 
     if (todo.detail) {
       details.hidden = false;
-      detailText.hidden = !todo.expanded;
-      detailText.textContent = todo.detail;
+      detailInput.hidden = !todo.expanded;
+      detailInput.value = todo.detail;
       toggleButton.textContent = todo.expanded ? "隐藏详情" : "展开详情";
       toggleButton.addEventListener("click", () => {
         toggleDetails(todo.id);
       });
     } else {
-      details.hidden = true;
+      details.hidden = false;
+      detailInput.hidden = !todo.expanded;
+      detailInput.value = "";
+      toggleButton.textContent = todo.expanded ? "隐藏详情" : "展开详情";
+      toggleButton.addEventListener("click", () => {
+        toggleDetails(todo.id);
+      });
     }
 
     checkbox.addEventListener("change", () => {
       toggleTodo(todo.id);
     });
 
+    titleInput.addEventListener("change", () => {
+      updateTodoContent(todo.id, {
+        title: titleInput.value.trim() || todo.title,
+      });
+    });
+
+    titleInput.addEventListener("blur", () => {
+      titleInput.value = titleInput.value.trim() || todo.title;
+      updateTodoContent(todo.id, {
+        title: titleInput.value,
+      });
+    });
+
     prioritySelect.addEventListener("change", () => {
       updatePriority(todo.id, prioritySelect.value);
+    });
+
+    detailInput.addEventListener("change", () => {
+      updateTodoContent(todo.id, {
+        detail: detailInput.value.trim(),
+      });
+    });
+
+    detailInput.addEventListener("blur", () => {
+      updateTodoContent(todo.id, {
+        detail: detailInput.value.trim(),
+      });
     });
 
     deleteButton.addEventListener("click", () => {
@@ -688,6 +719,13 @@ function updatePriority(id, priority) {
   );
   saveState();
   render();
+}
+
+function updateTodoContent(id, changes) {
+  state.todos = state.todos.map((todo) =>
+    todo.id === id ? { ...todo, ...changes } : todo
+  );
+  saveState();
 }
 
 function deleteTodo(id) {
