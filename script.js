@@ -222,6 +222,7 @@ function render() {
     item.classList.toggle("is-done", todo.done);
     checkbox.checked = todo.done;
     titleInput.value = todo.title;
+    syncTitleHeight(titleInput);
     prioritySelect.value = todo.priority;
     prioritySelect.dataset.priority = todo.priority;
 
@@ -259,6 +260,7 @@ function render() {
       updateTodoContent(todo.id, {
         title: titleInput.value.trim() || todo.title,
       });
+      syncTitleHeight(titleInput);
     });
 
     titleInput.addEventListener("blur", () => {
@@ -266,6 +268,11 @@ function render() {
       updateTodoContent(todo.id, {
         title: titleInput.value,
       });
+      syncTitleHeight(titleInput);
+    });
+
+    titleInput.addEventListener("input", () => {
+      syncTitleHeight(titleInput);
     });
 
     prioritySelect.addEventListener("change", () => {
@@ -726,6 +733,11 @@ function updateTodoContent(id, changes) {
     todo.id === id ? { ...todo, ...changes } : todo
   );
   saveState();
+}
+
+function syncTitleHeight(element) {
+  element.style.height = "0px";
+  element.style.height = `${element.scrollHeight}px`;
 }
 
 function deleteTodo(id) {

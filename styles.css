@@ -507,15 +507,14 @@ textarea {
 }
 
 .todo-item__topline {
-  display: flex;
-  flex-wrap: nowrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
   align-items: flex-start;
 }
 
 .todo-item__title-input {
   font-size: 1.05rem;
-  flex: 1;
   min-width: 0;
   padding: 0;
   border: 0;
@@ -524,6 +523,10 @@ textarea {
   color: var(--text);
   border-radius: 0;
   box-shadow: none;
+  resize: none;
+  overflow: hidden;
+  line-height: 1.35;
+  white-space: pre-wrap;
 }
 
 .todo-item__title-input:focus {
@@ -645,6 +648,16 @@ textarea {
 
   .quick-actions {
     grid-template-columns: 1fr;
+  }
+
+  .todo-item__topline {
+    grid-template-columns: 1fr;
+  }
+
+  .todo-item__priority {
+    width: 132px;
+    min-width: 132px;
+    justify-self: start;
   }
 
   .todo-item {
