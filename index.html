@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily Work Todo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div class="hero__content">
+          <p class="eyebrow">DAILY FOCUS BOARD</p>
+          <h1>每日工作 To-Do List</h1>
+          <p class="hero__text">
+            把今天最重要的事摆到台面上，专注推进，不靠记忆硬扛。
+          </p>
+        </div>
+        <div class="hero__meta">
+          <div class="date-card">
+            <span class="date-card__label">Today</span>
+            <strong id="todayLabel"></strong>
+            <span id="weekdayLabel"></span>
+          </div>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <section class="panel panel--form">
+          <div class="panel__header">
+            <h2>新建任务</h2>
+            <p>记录今天要推进的工作，并给它一个优先级。</p>
+          </div>
+
+          <form id="todoForm" class="todo-form">
+            <label class="field">
+              <span>任务内容</span>
+              <input
+                id="taskInput"
+                name="task"
+                type="text"
+                maxlength="120"
+                placeholder="例如：完成需求评审 / 跟进上线问题"
+                required
+              />
+            </label>
+
+            <div class="form-grid">
+              <label class="field">
+                <span>优先级</span>
+                <select id="priorityInput" name="priority">
+                  <option value="high">高优先级</option>
+                  <option value="medium" selected>中优先级</option>
+                  <option value="low">低优先级</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>分类</span>
+                <input
+                  id="categoryInput"
+                  name="category"
+                  type="text"
+                  maxlength="30"
+                  placeholder="开发 / 会议 / 沟通"
+                />
+              </label>
+            </div>
+
+            <label class="field">
+              <span>备注</span>
+              <textarea
+                id="noteInput"
+                name="note"
+                rows="3"
+                maxlength="200"
+                placeholder="补充截止时间、上下文或下一步动作"
+              ></textarea>
+            </label>
+
+            <button type="submit" class="button button--primary">添加到今日清单</button>
+          </form>
+        </section>
+
+        <section class="panel panel--overview">
+          <div class="panel__header">
+            <h2>今日概览</h2>
+            <p>清楚知道自己还有多少没做、哪些最急。</p>
+          </div>
+
+          <div class="stats">
+            <article class="stat-card">
+              <span>总任务</span>
+              <strong id="totalCount">0</strong>
+            </article>
+            <article class="stat-card">
+              <span>已完成</span>
+              <strong id="doneCount">0</strong>
+            </article>
+            <article class="stat-card">
+              <span>高优先级</span>
+              <strong id="highCount">0</strong>
+            </article>
+          </div>
+
+          <div class="progress-block">
+            <div class="progress-block__top">
+              <span>完成进度</span>
+              <strong id="progressText">0%</strong>
+            </div>
+            <div class="progress-bar" aria-hidden="true">
+              <div id="progressFill" class="progress-bar__fill"></div>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <div class="tooltip-wrap">
+              <button
+                id="clearDoneButton"
+                class="button button--ghost quick-actions__button"
+                type="button"
+                aria-describedby="archiveHint"
+              >
+                归档已完成
+              </button>
+              <div id="archiveHint" class="tooltip-bubble" role="tooltip">
+                已完成任务会保存在当前浏览器本地，可随时查看归档或导出 Markdown。
+              </div>
+            </div>
+            <a
+              class="button button--ghost button--link quick-actions__button"
+              href="./archive.html"
+            >
+              查看归档
+            </a>
+            <button id="exportMarkdownButton" class="button button--ghost quick-actions__button" type="button">
+              导出 Markdown
+            </button>
+            <button id="resetButton" class="button button--ghost quick-actions__button" type="button">
+              重置
+            </button>
+          </div>
+        </section>
+
+        <section class="panel panel--import">
+          <div class="panel__header">
+            <h2>会议纪要导入</h2>
+            <p>上传 Word 会议纪要，自动提取 Bill Wang 的待办段落，凝练后加入今日清单。</p>
+          </div>
+
+          <div class="import-card">
+            <div class="form-grid">
+              <label class="field">
+                <span>识别人名</span>
+                <input
+                  id="ownerInput"
+                  name="owner"
+                  type="text"
+                  value="Bill Wang"
+                  maxlength="40"
+                  placeholder="例如：Bill Wang"
+                />
+              </label>
+
+              <label class="field">
+                <span>文件类型</span>
+                <input
+                  id="fileInput"
+                  name="file"
+                  type="file"
+                  accept=".docx,.txt,.md,.pdf"
+                />
+              </label>
+            </div>
+
+            <div class="import-actions">
+              <button id="importButton" class="button button--primary" type="button">
+                导入我的待办
+              </button>
+              <p id="importStatus" class="import-status">
+                优先支持 Word `.docx`。会先找待办段落，再抽取你的任务并自动凝练。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel panel--list">
+          <div class="panel__header panel__header--split">
+            <div>
+              <h2>今日任务清单</h2>
+              <p>支持筛选和勾选完成，数据会自动保存在本地。</p>
+            </div>
+
+            <div class="filters" role="tablist" aria-label="任务筛选">
+              <button class="filter is-active" data-filter="all" type="button">全部</button>
+              <button class="filter" data-filter="todo" type="button">未完成</button>
+              <button class="filter" data-filter="done" type="button">已完成</button>
+            </div>
+          </div>
+
+          <div id="emptyState" class="empty-state">
+            <strong id="emptyStateTitle">今天还没有任务</strong>
+            <p id="emptyStateText">先添加 1 到 3 个最重要的工作项，开始推进。</p>
+          </div>
+
+          <ul id="todoList" class="todo-list" aria-live="polite"></ul>
+        </section>
+      </main>
+    </div>
+
+    <template id="todoItemTemplate">
+      <li class="todo-item">
+        <div class="todo-item__body">
+          <label class="todo-item__main">
+            <input class="todo-item__checkbox" type="checkbox" />
+            <span class="todo-item__content">
+              <span class="todo-item__topline">
+                <strong class="todo-item__title"></strong>
+                <select class="todo-item__priority" aria-label="调整优先级">
+                  <option value="high">高优先级</option>
+                  <option value="medium">中优先级</option>
+                  <option value="low">低优先级</option>
+                </select>
+              </span>
+              <span class="todo-item__meta"></span>
+              <span class="todo-item__note"></span>
+            </span>
+          </label>
+          <div class="todo-item__details" hidden>
+            <button class="todo-item__toggle" type="button">展开详情</button>
+            <p class="todo-item__detail-text"></p>
+          </div>
+        </div>
+        <button class="todo-item__delete" type="button" aria-label="删除任务">删除</button>
+      </li>
+    </template>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

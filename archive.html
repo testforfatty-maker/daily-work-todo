@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>任务归档</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero hero--archive">
+        <div class="hero__content">
+          <p class="eyebrow">ARCHIVE</p>
+          <h1>已完成任务归档</h1>
+          <p class="hero__text">这里会按周整理你归档过的已完成事项，支持回看和导出。</p>
+        </div>
+        <div class="hero__meta">
+          <a class="button button--ghost button--link" href="./index.html">返回今日清单</a>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <section class="panel panel--list">
+          <div class="panel__header panel__header--split">
+            <div>
+              <h2>归档列表</h2>
+              <p>任务归档保存在当前浏览器本地。</p>
+            </div>
+            <button id="archiveExportButton" class="button button--ghost" type="button">导出 Markdown</button>
+          </div>
+
+          <div id="archiveEmptyState" class="empty-state">
+            <strong>还没有归档记录</strong>
+            <p>回到今日清单，勾选完成后点击“归档已完成”。</p>
+          </div>
+
+          <div id="archiveGroups" class="archive-groups"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./archive.js"></script>
+  </body>
+</html>

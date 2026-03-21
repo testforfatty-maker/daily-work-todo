@@ -1,0 +1,160 @@
+const STORAGE_KEY = "daily-work-todo-v1";
+
+const archiveGroups = document.querySelector("#archiveGroups");
+const archiveEmptyState = document.querySelector("#archiveEmptyState");
+const archiveExportButton = document.querySelector("#archiveExportButton");
+
+const state = loadState();
+
+renderArchive();
+
+archiveExportButton.addEventListener("click", () => {
+  const markdown = buildArchiveMarkdown(state.archive);
+  downloadMarkdown(markdown, `completed-tasks-${currentDateKey()}.md`);
+});
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    return {
+      archive: Array.isArray(parsed.archive) ? parsed.archive : [],
+    };
+  } catch {
+    return { archive: [] };
+  }
+}
+
+function renderArchive() {
+  archiveGroups.innerHTML = "";
+
+  if (state.archive.length === 0) {
+    archiveEmptyState.hidden = false;
+    return;
+  }
+
+  archiveEmptyState.hidden = true;
+
+  const groups = groupByWeekStamp(state.archive);
+
+  groups.forEach(({ stamp, items }) => {
+    const section = document.createElement("section");
+    section.className = "archive-group";
+
+    const title = document.createElement("h3");
+    title.className = "archive-group__title";
+    title.textContent = stamp;
+
+    const list = document.createElement("ul");
+    list.className = "archive-list";
+
+    items.forEach((item) => {
+      const li = document.createElement("li");
+      li.className = "archive-list__item";
+
+      const headline = document.createElement("strong");
+      headline.textContent = item.title;
+
+      const meta = document.createElement("p");
+      meta.textContent = [
+        item.priority ? `优先级 ${priorityLabel(item.priority)}` : "",
+        item.category || "",
+        item.archivedAt ? formatDateTime(item.archivedAt) : "",
+      ].filter(Boolean).join(" · ");
+
+      li.append(headline, meta);
+
+      if (item.detail) {
+        const detail = document.createElement("p");
+        detail.className = "archive-list__detail";
+        detail.textContent = item.detail;
+        li.append(detail);
+      }
+
+      list.append(li);
+    });
+
+    section.append(title, list);
+    archiveGroups.append(section);
+  });
+}
+
+function groupByWeekStamp(items) {
+  const grouped = new Map();
+
+  items.forEach((item) => {
+    const stamp = formatWeekStamp(item.archivedAt || item.createdAt || new Date().toISOString());
+    if (!grouped.has(stamp)) {
+      grouped.set(stamp, []);
+    }
+    grouped.get(stamp).push(item);
+  });
+
+  return [...grouped.entries()].map(([stamp, groupedItems]) => ({
+    stamp,
+    items: groupedItems,
+  }));
+}
+
+function buildArchiveMarkdown(items) {
+  if (items.length === 0) {
+    return "# Completed Tasks Archive\n\n暂无归档记录。\n";
+  }
+
+  let output = "# Completed Tasks Archive\n\n";
+  groupByWeekStamp(items).forEach(({ stamp, items: groupedItems }) => {
+    output += `## ${stamp}\n\n`;
+    groupedItems.forEach((item) => {
+      const parts = [`- ${item.title}`];
+      if (item.priority) parts.push(`优先级: ${priorityLabel(item.priority)}`);
+      if (item.category) parts.push(`分类: ${item.category}`);
+      if (item.archivedAt) parts.push(`完成时间: ${formatDateTime(item.archivedAt)}`);
+      output += `${parts.join(" | ")}\n`;
+      if (item.detail) {
+        output += `  详情: ${item.detail}\n`;
+      }
+    });
+    output += "\n";
+  });
+
+  return output;
+}
+
+function downloadMarkdown(content, fileName) {
+  const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = fileName;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
+function formatWeekStamp(value) {
+  const date = new Date(value);
+  const month = new Intl.DateTimeFormat("en-US", { month: "long" }).format(date);
+  return `${month} W${Math.ceil(date.getDate() / 7)}`;
+}
+
+function formatDateTime(value) {
+  const date = new Date(value);
+  return new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function priorityLabel(priority) {
+  return priority === "high" ? "高" : priority === "medium" ? "中" : "低";
+}
+
+function currentDateKey() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
