@@ -442,14 +442,67 @@ textarea {
   gap: 12px;
 }
 
+.archive-list__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.archive-list__actions {
+  display: grid;
+  gap: 10px;
+  justify-items: end;
+  flex: 0 0 132px;
+}
+
+.archive-list__title-input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.4;
+  resize: none;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.archive-list__title-input:focus {
+  box-shadow: none;
+  border: 0;
+}
+
+.archive-list__priority {
+  width: 132px;
+  min-width: 132px;
+  padding: 8px 12px;
+  border-radius: 999px;
+}
+
+.archive-list__delete {
+  border: 0;
+  background: transparent;
+  color: var(--accent-strong);
+  cursor: pointer;
+  font-weight: 600;
+}
+
 .archive-list__item p {
   margin: 6px 0 0;
   color: var(--muted);
   line-height: 1.6;
 }
 
-.archive-list__detail {
+.archive-list__detail-input {
+  margin-top: 10px;
+  min-height: 110px;
   white-space: pre-wrap;
+  line-height: 1.7;
+}
 }
 
 .todo-list {

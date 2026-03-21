@@ -52,8 +52,35 @@ function renderArchive() {
       const li = document.createElement("li");
       li.className = "archive-list__item";
 
-      const headline = document.createElement("strong");
-      headline.textContent = item.title;
+      const top = document.createElement("div");
+      top.className = "archive-list__top";
+
+      const titleInput = document.createElement("textarea");
+      titleInput.className = "archive-list__title-input";
+      titleInput.rows = 1;
+      titleInput.maxLength = 120;
+      titleInput.value = item.title || "";
+      syncTextareaHeight(titleInput);
+
+      const actions = document.createElement("div");
+      actions.className = "archive-list__actions";
+
+      const prioritySelect = document.createElement("select");
+      prioritySelect.className = "archive-list__priority";
+      prioritySelect.innerHTML = `
+        <option value="high">高优先级</option>
+        <option value="medium">中优先级</option>
+        <option value="low">低优先级</option>
+      `;
+      prioritySelect.value = item.priority || "low";
+
+      const deleteButton = document.createElement("button");
+      deleteButton.className = "archive-list__delete";
+      deleteButton.type = "button";
+      deleteButton.textContent = "删除";
+
+      actions.append(prioritySelect, deleteButton);
+      top.append(titleInput, actions);
 
       const meta = document.createElement("p");
       meta.textContent = [
@@ -62,14 +89,39 @@ function renderArchive() {
         item.archivedAt ? formatDateTime(item.archivedAt) : "",
       ].filter(Boolean).join(" · ");
 
-      li.append(headline, meta);
+      const detailInput = document.createElement("textarea");
+      detailInput.className = "archive-list__detail-input";
+      detailInput.rows = 4;
+      detailInput.maxLength = 500;
+      detailInput.value = item.detail || "";
 
-      if (item.detail) {
-        const detail = document.createElement("p");
-        detail.className = "archive-list__detail";
-        detail.textContent = item.detail;
-        li.append(detail);
-      }
+      li.append(top, meta, detailInput);
+
+      titleInput.addEventListener("input", () => {
+        syncTextareaHeight(titleInput);
+      });
+
+      titleInput.addEventListener("blur", () => {
+        updateArchiveItem(item.id, {
+          title: titleInput.value.trim() || item.title,
+        });
+      });
+
+      prioritySelect.addEventListener("change", () => {
+        updateArchiveItem(item.id, {
+          priority: prioritySelect.value,
+        });
+      });
+
+      detailInput.addEventListener("blur", () => {
+        updateArchiveItem(item.id, {
+          detail: detailInput.value.trim(),
+        });
+      });
+
+      deleteButton.addEventListener("click", () => {
+        deleteArchiveItem(item.id);
+      });
 
       list.append(li);
     });
@@ -77,6 +129,27 @@ function renderArchive() {
     section.append(title, list);
     archiveGroups.append(section);
   });
+}
+
+function updateArchiveItem(id, changes) {
+  state.archive = state.archive.map((item) =>
+    item.id === id ? { ...item, ...changes } : item
+  );
+  persistState();
+  renderArchive();
+}
+
+function deleteArchiveItem(id) {
+  state.archive = state.archive.filter((item) => item.id !== id);
+  persistState();
+  renderArchive();
+}
+
+function persistState() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  const parsed = raw ? JSON.parse(raw) : {};
+  parsed.archive = state.archive;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
 }
 
 function groupByWeekStamp(items) {
@@ -157,4 +230,9 @@ function currentDateKey() {
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const day = String(now.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function syncTextareaHeight(element) {
+  element.style.height = "0px";
+  element.style.height = `${element.scrollHeight}px`;
 }
