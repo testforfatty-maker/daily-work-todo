@@ -216,11 +216,6 @@
             <span class="todo-item__content">
               <span class="todo-item__topline">
                 <textarea class="todo-item__title-input" rows="1" maxlength="120" aria-label="编辑任务标题"></textarea>
-                <select class="todo-item__priority" aria-label="调整优先级">
-                  <option value="high">高优先级</option>
-                  <option value="medium">中优先级</option>
-                  <option value="low">低优先级</option>
-                </select>
               </span>
               <span class="todo-item__meta"></span>
               <span class="todo-item__note"></span>
@@ -231,7 +226,14 @@
             <textarea class="todo-item__detail-input" rows="4" maxlength="500" aria-label="编辑任务详情"></textarea>
           </div>
         </div>
-        <button class="todo-item__delete" type="button" aria-label="删除任务">删除</button>
+        <div class="todo-item__actions">
+          <select class="todo-item__priority" aria-label="调整优先级">
+            <option value="high">高优先级</option>
+            <option value="medium">中优先级</option>
+            <option value="low">低优先级</option>
+          </select>
+          <button class="todo-item__delete" type="button" aria-label="删除任务">删除</button>
+        </div>
       </li>
     </template>
 
