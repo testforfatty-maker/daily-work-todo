@@ -55,8 +55,8 @@ form.addEventListener("submit", (event) => {
     title,
     priority: priorityInput.value,
     category,
-    note,
-    detail: "",
+    note: "",
+    detail: note,
     expanded: false,
     done: false,
     createdAt: new Date().toISOString(),
@@ -185,8 +185,8 @@ function loadState() {
 
     return {
       day: parsed.day,
-      todos: Array.isArray(parsed.todos) ? parsed.todos : [],
-      archive: Array.isArray(parsed.archive) ? parsed.archive : [],
+      todos: migrateTodos(Array.isArray(parsed.todos) ? parsed.todos : []),
+      archive: migrateTodos(Array.isArray(parsed.archive) ? parsed.archive : []),
     };
   } catch {
     return createInitialState();
@@ -232,7 +232,8 @@ function render() {
     }).format(new Date(todo.createdAt));
 
     meta.textContent = [todo.category || "未分类", `创建于 ${createdTime}`].join(" · ");
-    note.textContent = todo.note || "无备注";
+    note.hidden = !todo.note;
+    note.textContent = todo.note || "";
 
     if (todo.detail) {
       details.hidden = false;
@@ -815,6 +816,28 @@ function shortenSourceLabel(fileName) {
   }
 
   return `来自 ${baseName.slice(0, 12)}`;
+}
+
+function migrateTodos(items) {
+  return items.map((item) => {
+    const note = typeof item.note === "string" ? item.note.trim() : "";
+    const detail = typeof item.detail === "string" ? item.detail.trim() : "";
+    const isSourceNote = note.startsWith("来自");
+
+    if (note && !detail && !isSourceNote) {
+      return {
+        ...item,
+        note: "",
+        detail: note,
+      };
+    }
+
+    return {
+      ...item,
+      note,
+      detail,
+    };
+  });
 }
 
 function buildArchiveMarkdown(items) {
