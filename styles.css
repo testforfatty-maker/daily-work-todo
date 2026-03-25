@@ -561,6 +561,8 @@ textarea {
 }
 
 .todo-item__content {
+  flex: 1;
+  width: 100%;
   min-width: 0;
   display: grid;
   gap: 8px;
@@ -624,6 +626,8 @@ textarea {
 
 .todo-item__detail-input {
   margin-top: 4px;
+  width: 100%;
+  display: block;
   padding: 0;
   border-radius: 14px;
   background: transparent;
