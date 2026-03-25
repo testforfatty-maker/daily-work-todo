@@ -210,8 +210,6 @@ function render() {
     const prioritySelect = fragment.querySelector(".todo-item__priority");
     const meta = fragment.querySelector(".todo-item__meta");
     const note = fragment.querySelector(".todo-item__note");
-    const details = fragment.querySelector(".todo-item__details");
-    const toggleButton = fragment.querySelector(".todo-item__toggle");
     const detailInput = fragment.querySelector(".todo-item__detail-input");
     const deleteButton = fragment.querySelector(".todo-item__delete");
 
@@ -230,24 +228,7 @@ function render() {
     meta.textContent = [todo.category || "未分类", `创建于 ${createdTime}`].join(" · ");
     note.hidden = !todo.note;
     note.textContent = todo.note || "";
-
-    if (todo.detail) {
-      details.hidden = false;
-      detailInput.hidden = !todo.expanded;
-      detailInput.value = todo.detail;
-      toggleButton.textContent = todo.expanded ? "隐藏详情" : "展开详情";
-      toggleButton.addEventListener("click", () => {
-        toggleDetails(todo.id);
-      });
-    } else {
-      details.hidden = false;
-      detailInput.hidden = !todo.expanded;
-      detailInput.value = "";
-      toggleButton.textContent = todo.expanded ? "隐藏详情" : "展开详情";
-      toggleButton.addEventListener("click", () => {
-        toggleDetails(todo.id);
-      });
-    }
+    detailInput.value = todo.detail || "";
 
     checkbox.addEventListener("change", () => {
       toggleTodo(todo.id);
@@ -699,14 +680,6 @@ function setImportStatus(message, tone) {
   if (tone === "error") {
     importStatus.classList.add("is-error");
   }
-}
-
-function toggleDetails(id) {
-  state.todos = state.todos.map((todo) =>
-    todo.id === id ? { ...todo, expanded: !todo.expanded } : todo
-  );
-  saveState();
-  render();
 }
 
 function toggleTodo(id) {

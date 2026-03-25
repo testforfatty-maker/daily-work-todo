@@ -622,30 +622,23 @@ textarea {
   line-height: 1.55;
 }
 
-.todo-item__details {
-  margin-left: 34px;
-  margin-top: 8px;
-}
-
-.todo-item__toggle {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--accent-strong);
-  cursor: pointer;
-  font-weight: 600;
-}
-
 .todo-item__detail-input {
-  margin-top: 10px;
-  padding: 12px 14px;
+  margin-top: 4px;
+  padding: 0;
   border-radius: 14px;
-  background: rgba(255, 247, 236, 0.92);
-  border: 1px solid rgba(88, 64, 37, 0.08);
+  background: transparent;
+  border: 0;
   color: var(--muted);
   line-height: 1.7;
   white-space: pre-wrap;
-  min-height: 110px;
+  min-height: 72px;
+  resize: vertical;
+  box-shadow: none;
+}
+
+.todo-item__detail-input:focus {
+  border: 0;
+  box-shadow: none;
 }
 
 .todo-item__delete {
