@@ -101,7 +101,7 @@ exportMarkdownButton.addEventListener("click", () => {
 });
 
 resetButton.addEventListener("click", () => {
-  const confirmed = window.confirm("确定要清空今天的全部任务吗？");
+  const confirmed = window.confirm("确定要清空当前全部任务吗？");
 
   if (!confirmed) {
     return;
@@ -179,12 +179,8 @@ function loadState() {
 
   try {
     const parsed = JSON.parse(raw);
-    if (parsed.day !== currentDayKey()) {
-      return createInitialState(Array.isArray(parsed.archive) ? parsed.archive : []);
-    }
-
     return {
-      day: parsed.day,
+      day: currentDayKey(),
       todos: migrateTodos(Array.isArray(parsed.todos) ? parsed.todos : []),
       archive: migrateTodos(Array.isArray(parsed.archive) ? parsed.archive : []),
     };
